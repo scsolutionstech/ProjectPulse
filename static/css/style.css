@@ -1,0 +1,19 @@
+
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}  
+
+/* register page */
+/* styles.css */
+
+/* Center the card vertically */
+body, html {
+    height: 100%;
+    background-color: #f8f9fa;
+    overflow: auto; /* Light gray background */
+}
+
+

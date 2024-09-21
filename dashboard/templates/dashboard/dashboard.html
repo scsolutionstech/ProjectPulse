@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - ProjectPulse{% endblock %}
+{% block content %}
+<h2>Welcome, {{ user.username }}!</h2>
+
+
+<!-- Search and Filter Form -->
+<form method="get" action="{% url 'dashboard:dashboard' %}" class="form-inline mb-3">
+    <input type="text" name="q" class="form-control mr-2" placeholder="Search tasks..." value="{{ search_query }}">
+    <select name="status" class="form-control mr-2">
+        <option value="">All Statuses</option>
+        <option value="todo" {% if status_filter == 'todo' %}selected{% endif %}>To Do</option>
+        <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>In Progress</option>
+        <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+    </select>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<!-- Overdue Tasks -->
+{% if overdue_tasks %}
+<h3>Overdue Tasks</h3>
+<ul class="list-group mb-4">
+    {% for task in overdue_tasks %}
+    <li class="list-group-item">
+        <a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a> (Due: {{ task.due_date }})
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<!-- Assigned Tasks -->
+<h3>Your Tasks</h3>
+<div class="table-responsive">
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Project</th>
+            <th>Status</th>
+            <th>Due Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td><a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a></td>
+            <td><a href="{% url 'project_detail' task.project.pk %}">{{ task.project.name }}</a></td>
+            <td>{{ task.get_status_display }}</td>
+            <td>{{ task.due_date }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No tasks assigned.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}
