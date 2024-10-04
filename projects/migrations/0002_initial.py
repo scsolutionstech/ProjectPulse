@@ -11,18 +11,24 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('projects', '0001_initial'),
+        ("projects", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='project_manager',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='managed_projects', to=settings.AUTH_USER_MODEL),
+            model_name="project",
+            name="project_manager",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="managed_projects",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='project',
-            name='team_members',
-            field=models.ManyToManyField(related_name='projects', to=settings.AUTH_USER_MODEL),
+            model_name="project",
+            name="team_members",
+            field=models.ManyToManyField(
+                related_name="projects", to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]

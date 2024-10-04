@@ -5,25 +5,38 @@
 <p>{{ project.description }}</p>
 <p><strong>Start Date:</strong> {{ project.start_date }}</p>
 <p><strong>End Date:</strong> {{ project.end_date }}</p>
-<p><strong>Project Manager:</strong> {{ project.project_manager.username }}</p>
+<p><strong>Project Manager:</strong> {{ project.project_manager.email }}</p>
 <p><strong>Billing Status:</strong> {{ project.get_billing_status_display }}</p>
 <p><strong>Team Members:</strong>
+    <details>
+        <summary>Click to Show Members</summary>
+        <div>
+            <ul>
     {% for member in project.team_members.all %}
-        {{ member.username }}{% if not forloop.last %}, {% endif %}
-    {% endfor %}
+    <li>{{ member.email }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</details>
+
 </p>
 
-<h3>Progress: {{ project.progress }}%</h3>
+<h3>Progress:  {{progress }}%</h3>
 <div class="progress">
-    <div class="progress-bar" role="progressbar" style="width: {{ project.progress }}%;"
-         aria-valuenow="{{ project.progress }}" aria-valuemin="0" aria-valuemax="100">
-        {{ project.progress }}%
+    <div class="progress-bar" role="progressbar" style="width: {{progress}}%;"
+         aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">
+         {{ progress}}%
     </div>
 </div>
+<h3 class="mt-4">Tasks</h3>
 
 <!-- Tasks Section -->
-<h3 class="mt-4">Tasks</h3>
+{% if user.role == 'team_member' %}
+<!-- Team members should not see the Create Project option -->
+{% else %} 
 <a href="{% url 'create_task' project.pk %}" class="btn btn-primary mb-2">Add Task</a>
+{% endif %}
+
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -36,15 +49,29 @@
         </tr>
     </thead>
     <tbody>
-        {% for task in project.tasks.all %}
+        {% for task in tasks %}
         <tr>
             <td><a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a></td>
-            <td>{{ task.assigned_to.username }}</td>
+            <td>{{ task.assigned_to.email }}</td>
             <td>{{ task.get_status_display }}</td>
             <td>{{ task.get_priority_display }}</td>
-            <td>{{ task.due_date }}</td>
+            <td>{{ task.due_date|date:"M d, Y" }}</td>
+            {% if task.attachments %}
             <td>
-                <a href="{% url 'update_task_status' task.pk %}" class="btn btn-sm btn-secondary">Update Status</a>
+                <a href="{{ task.attachments.url }}" target="_blank">{{ task.attachments.name }}</a>
+            </td>
+        {% else %}
+            <td>No attachments available.</td>
+        {% endif %}            <td>  
+                <form method="post" action="{% url 'update_task_status' task.pk %}">
+                    {% csrf_token %}
+                    <select name="status" class="form-control" onchange="this.form.submit()">
+                        <!-- Loop through all status options -->
+                        {% for value, display in task.status.choices %}
+                            <option value="{{ value }}" {% if task.status == value %}selected{% endif %}>{{ display }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
             </td>
         </tr>
         {% empty %}

@@ -1,111 +1,115 @@
-{% extends 'base.html' %}
-
-{% load static %}
-
-{% block title %}Register - ProjectPulse{% endblock %}
-
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block title %}Register -
+ProjectPulse{% endblock %} {% block content %}
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-14 col-lg-12"> <!-- Adjusted column widths -->
-            <div class="card shadow-sm card-custom-width">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Create an Account</h4>
-                </div>
-                <div class="card-body">
-                    <form method="post" novalidate>
-                        {% csrf_token %}
-                        
-                         <!-- Display Messages -->
-                         {% if messages %}
-                            {% for message in messages %}
-                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                        
-                        <!-- Non-Field Errors -->
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
-                                {% for error in form.non_field_errors %}
-                                    <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        
-                        <!-- Username Field -->
-                        <div class="form-group">
-                            <label for="{{ form.username.id_for_label }}">Username:</label>
-                            {{ form.username }}
-                            {% if form.username.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.username.errors %}
-                                        <p>{{ error }}</p>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        
-                        <!-- Email Field -->
-                        <div class="form-group">
-                            <label for="{{ form.email.id_for_label }}">Email:</label>
-                            {{ form.email }}
-                            {% if form.email.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.email.errors %}
-                                        <p>{{ error }}</p>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        
-                        <!-- Password Field -->
-                        <div class="form-group">
-                            <label for="{{ form.password1.id_for_label }}">Password:</label>
-                            {{ form.password1 }}
-                            {% if form.password1.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.password1.errors %}
-                                        <p>{{ error }}</p>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            <small class="form-text text-muted">
-                                Your password can’t be too similar to your other personal information.<br>
-                                Your password must contain at least 8 characters.<br>
-                                Your password can’t be a commonly used password.<br>
-                                Your password can’t be entirely numeric.
-                            </small>
-                        </div>
-                        
-                        <!-- Password Confirmation Field -->
-                        <div class="form-group">
-                            <label for="{{ form.password2.id_for_label }}">Password confirmation:</label>
-                            {{ form.password2 }}
-                            {% if form.password2.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.password2.errors %}
-                                        <p>{{ error }}</p>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            <small class="form-text text-muted">
-                                Enter the same password as before, for verification.
-                            </small>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary btn-block">Register</button>
-                    </form>
-                </div>
-                <div class="card-footer text-center">
-                    Already have an account? <a href="{% url 'login' %}" class="text-primary">Login here</a>.
-                </div>
-            </div>
+  <div class="row justify-content-center">
+    <div class="col-md-14 col-lg-12">
+      <!-- Adjusted column widths -->
+      <div class="card shadow-sm card-custom-width">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Create an Account</h4>
         </div>
+        <div class="card-body">
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            <!-- Display Messages -->
+            {% if messages %} {% for message in messages %}
+            <div
+              class="alert alert-{{ message.tags }} alert-dismissible fade show"
+              role="alert"
+            >
+              {{ message }}
+              <button
+                type="button"
+                class="close"
+                data-dismiss="alert"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            {% endfor %} {% endif %}
+
+            <!-- Non-Field Errors -->
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Username Field -->
+            <div class="form-group">
+              <label for="{{ form.username.id_for_label }}">Username:</label>
+              {{ form.username }} {% if form.username.errors %}
+              <div class="invalid-feedback d-block">
+                {% for error in form.username.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Email Field -->
+            <div class="form-group">
+              <label for="{{ form.email.id_for_label }}">Email:</label>
+              {{ form.email }} {% if form.email.errors %}
+              <div class="invalid-feedback d-block">
+                {% for error in form.email.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group">
+              <label for="{{ form.password1.id_for_label }}">Password:</label>
+              {{ form.password1 }} {% if form.password1.errors %}
+              <div class="invalid-feedback d-block">
+                {% for error in form.password1.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+              {% endif %}
+              <small class="form-text text-muted">
+                Your password can’t be too similar to your other personal
+                information.<br />
+                Your password must contain at least 8 characters.<br />
+                Your password can’t be a commonly used password.<br />
+                Your password can’t be entirely numeric.
+              </small>
+            </div>
+
+            <!-- Password Confirmation Field -->
+            <div class="form-group">
+              <label for="{{ form.password2.id_for_label }}"
+                >Password confirmation:</label
+              >
+              {{ form.password2 }} {% if form.password2.errors %}
+              <div class="invalid-feedback d-block">
+                {% for error in form.password2.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+              {% endif %}
+              <small class="form-text text-muted">
+                Enter the same password as before, for verification.
+              </small>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+              Register
+            </button>
+          </form>
+        </div>
+        <div class="card-footer text-center">
+          Already have an account?
+          <a href="{% url 'login' %}" class="text-primary">Login here</a>.
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

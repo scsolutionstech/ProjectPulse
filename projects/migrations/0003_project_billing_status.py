@@ -6,13 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0002_initial'),
+        ("projects", "0002_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='billing_status',
-            field=models.CharField(choices=[('billable', 'Billable'), ('non_billable', 'Non-Billable'), ('partial', 'Partially Billable')], default='billable', max_length=20),
+            model_name="project",
+            name="billing_status",
+            field=models.CharField(
+                choices=[
+                    ("billable", "Billable"),
+                    ("non_billable", "Non-Billable"),
+                    ("partial", "Partially Billable"),
+                ],
+                default="billable",
+                max_length=20,
+            ),
         ),
     ]

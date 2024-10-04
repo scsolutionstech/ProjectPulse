@@ -1,75 +1,98 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Group,PermissionsMixin
+"""This module contains the models for the accounts app."""
+
+from enum import StrEnum
+
+from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.contrib.auth.models import Group
-from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
+class UserRole(StrEnum):
+    """This class defines the user roles."""
 
-class MyAccountManager(BaseUserManager):
+    ADMIN = "admin"
+    PROJECT_MANAGER = "project_manager"
+    TEAM_MEMBER = "team_member"
 
-    def create_user(self, email, username, password=None, **extra_fields):
+
+class CustomUserManager(BaseUserManager):
+    """This class defines the custom user manager for the custom user model."""
+
+    def create_user(self, email, password=None, **extra_fields):
+        """Create and return a regular user with an email and password.
+
+        Args:
+            email (str): The email of the user.
+            password (str): The password of the user.
+            **extra_fields: The extra fields of the user.
+
+        Returns:
+            _type_: CustomUser
+        """
         if not email:
             raise ValueError("The Email field must be set")
-        if not username:
-            raise ValueError("The Username field must be set")
         email = self.normalize_email(email)
-        user = self.model(email=email, username=username, **extra_fields)
+        user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, username, password=None, **extra_fields):
+    def create_superuser(self, email, password=None, **extra_fields):
+        """Create and return a superuser with an email and password.
+
+        Args:
+            email (str): The email of the user.
+            password (str): The password of the user.
+            **extra_fields: The extra fields of the user.
+
+        Returns:
+            _type_: CustomUser
+        """
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("is_active", True)
-        extra_fields.setdefault("is_admin", True)
+        extra_fields.setdefault("role", UserRole.ADMIN)
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
+        if extra_fields.get("role") != UserRole.ADMIN:
+            raise ValueError("Superuser must have role=ADMIN.")
 
-        return self.create_user(email, username, password, **extra_fields)
-
-
-
-class CustomUser(AbstractBaseUser,PermissionsMixin):
-    ROLE_CHOICES = [
-        ('ADMIN', 'Administrator'),
-        ('PROJECT_MANAGER', 'Project Manager'),
-        ('TEAM_MEMBER', 'Team Member'),
-    ]
-    username = models.CharField(max_length=150)
-    email = models.EmailField(unique=True)
-    profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='TEAM_MEMBER')
+        return self.create_user(email, password, **extra_fields)
 
 
+class CustomUser(AbstractUser):
+    """This class extends the AbstractUser class to add custom fields field."""
+
+    username = None
+    email = models.EmailField(_("email address"), unique=True)
+    profile_picture = models.ImageField(
+        upload_to="profile_pictures", blank=True, null=True
+    )
+    role = models.CharField(
+        max_length=20,
+        choices=[(role.value, role.value) for role in UserRole],
+        default=UserRole.TEAM_MEMBER,
+    )
     is_active = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(default=timezone.now)
-    last_login = models.DateTimeField(auto_now_add=True)
-    is_admin = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False) 
-    objects = MyAccountManager()
 
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["first_name", "last_name"]
+
+    class Meta:
+        """This class defines the metadata for the custom user model."""
+
+        verbose_name = _("user")
+        verbose_name_plural = _("users")
 
     def __str__(self):
-        return self.username
-    
-    objects = MyAccountManager()
+        """Return the string representation of the user object.
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username',] 
-
-    groups = models.ManyToManyField(Group, blank=True, related_name="accounts")
-    user_permissions = models.ManyToManyField(
-        "auth.Permission", blank=True, related_name="accounts"
-    )
-
-
-    def has_perm(self, perm, obj=None):
-        return self.is_superuser or super().has_perm(perm, obj)
-
-    def has_module_perms(self, app_label):
-        return self.is_superuser or super().has_module_perms(app_label)
+        Returns:
+            _type_: str
+        """
+        return f"{self.id}: {self.first_name} {self.last_name}"
