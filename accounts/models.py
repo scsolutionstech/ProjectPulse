@@ -76,7 +76,6 @@ class CustomUser(AbstractUser):
         choices=[(role.value, role.value) for role in UserRole],
         default=UserRole.TEAM_MEMBER,
     )
-    is_active = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 

@@ -29,6 +29,12 @@ class CustomUserCreationForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("A user with that email already exists.")
         return email
+    def save(self, commit=True):
+        user = super().save(commit=False) 
+        user.is_active = True if user.is_superuser else False  
+        if commit:
+            user.save() 
+        return user
 
 
 # login form
